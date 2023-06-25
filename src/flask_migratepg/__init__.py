@@ -70,7 +70,7 @@ class MigratePg:
         @bp.cli.command('execute')
         def execute():
             conninfo = current_app.config.get('PSYCOPG_CONNINFO')
-            default_migrations_path = os.path.join(current_app.instance_path, 'database/migrations')
+            default_migrations_path = os.path.join(current_app.root_path, 'database/migrations')
             migrations_path = current_app.config.get('MIGRATIONS_PATH', default_migrations_path)
             with psycopg.connect(conninfo) as conn:
                 init(conn)
