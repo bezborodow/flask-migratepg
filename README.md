@@ -27,7 +27,7 @@ flask migrate execute
 This will run migrations in alphabetical order and track them in a migrations table.
 
 Migrations should be under `database/migrations` as either an **SQL** or **Python** file
-(that is, with an `.sql` or `.py` filename extension resepectively.
+(that is, with an `.sql` or `.py` filename extension resepectively.)
 
 A Python migration must implement a method `migrate(conn)`. An example of this:
 
