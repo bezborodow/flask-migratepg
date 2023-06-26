@@ -1,6 +1,10 @@
 # `flask-migratepg`: Database Migrations for Flask and PostgreSQL with Psycopg
 
-This is a simple migrations tool for Flask and Psycopg.
+This is a simple migrations tool for Flask and [Psycopg 3](https://www.psycopg.org/psycopg3/).
+
+ 1. Install and setup the Flask extension.
+ 2. Place SQL migrations under `database/migrations/`.
+ 3. Execute migrations.
 
 Setup in application:
 
@@ -20,7 +24,6 @@ MigratePg(app)
 Then to run migrations:
 
 ```
-. venv/bin/activate
 flask migrate execute
 ```
 
