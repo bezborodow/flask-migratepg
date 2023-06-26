@@ -17,12 +17,13 @@ def migrate_py(conn, e):
     module_name = os.path.splitext(e.name)[0]
     spec = importlib.util.spec_from_file_location(module_name, e.path)
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
 
     with psycopg.ClientCursor(conn) as cur:
         if not begin(cur, e.name):
             return
-        module.migrate(conn)
+        spec.loader.exec_module(module)
+        if hasattr(module, 'migrate'):
+            module.migrate(conn)
         finalise(cur, e.name)
 
 
