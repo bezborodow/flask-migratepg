@@ -41,5 +41,4 @@ present, it will be called. An example of this:
 def migrate(conn):
     cur = conn.cursor()
     # ...
-    cur.execute('commit')
 ````
