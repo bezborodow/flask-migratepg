@@ -111,15 +111,15 @@ class MigratePg:
 
             with self.connect() as conn:
                 cur = conn.cursor()
-                cur.row_factory = psycopg.rows.namedtuple_row
+                cur.row_factory = psycopg.rows.dict_row
                 query = '''
-                    select t.table_name as table_name,
-                        array_agg( c ) as columns
+                    select t.table_name,
+                            json_agg(c) as columns
                     from information_schema.tables t
                     inner join (
                         select cl.table_name, cl.column_name, cl.udt_name
                         from information_schema.columns cl
-                    ) c (table_name,column_name,udt_name) on c.table_name = t.table_name
+                    ) c (table_name,column_name,udt_name) on (c.table_name = t.table_name)
                     where t.table_type = 'BASE TABLE'
                     and t.table_schema NOT IN ('pg_catalog', 'information_schema')
                     and t.table_catalog = current_database()
@@ -128,10 +128,9 @@ class MigratePg:
 
                 cur.execute(query)
                 while row := cur.fetchone():
-                    schema_file = os.path.join(schema_path, row.table_name + '.json')
+                    schema_file = os.path.join(schema_path, row['table_name'] + '.json')
                     with open(schema_file, 'w') as f:
-                         json.dump(row.columns, f,
-                                   indent=2)
+                         json.dump(row, f, indent=2)
 
             print('Done.')
 
