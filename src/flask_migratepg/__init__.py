@@ -114,15 +114,20 @@ class MigratePg:
                 cur.row_factory = psycopg.rows.dict_row
                 query = '''
                     select t.table_name,
-                            json_agg(c) as columns
+                            json_agg(
+                                json_build_object(
+                                    'column_name', c.column_name,
+                                    'udt_name', c.udt_name,
+                                    'data_type', c.data_type,
+                                    'character_maximum_length', c.character_maximum_length,
+                                    'is_nullable', c.is_nullable = 'YES'
+                                )
+                            ) as columns
                     from information_schema.tables t
-                    inner join (
-                        select cl.table_name, cl.column_name, cl.udt_name
-                        from information_schema.columns cl
-                    ) c (table_name,column_name,udt_name) on (c.table_name = t.table_name)
+                    join information_schema.columns c using (table_name)
                     where t.table_type = 'BASE TABLE'
-                    and t.table_schema NOT IN ('pg_catalog', 'information_schema')
-                    and t.table_catalog = current_database()
+                        and t.table_schema not in ('pg_catalog', 'information_schema')
+                        and t.table_catalog = current_database()
                     group by t.table_name
                 '''
 
