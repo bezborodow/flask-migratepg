@@ -1,4 +1,5 @@
-_build:
+.PHONY: build clean publish
+build:
 	python3 -m build
 
 publish:
