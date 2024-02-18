@@ -66,18 +66,24 @@ class MigratePg:
         if app is not None:
             self.init(app)
 
+
     def connect(self):
         return psycopg.connect(
                 current_app.config.get('PSYCOPG_CONNINFO'))
+
+
+    def migrations_path(self):
+        return current_app.config.get(
+                'MIGRATIONS_PATH',
+                os.path.join(current_app.root_path, 'database/migrations'))
+
 
     def init(self, app):
         bp = Blueprint('migrate', __name__)
 
         @bp.cli.command('execute')
         def execute():
-            migrations_path = current_app.config.get(
-                    'MIGRATIONS_PATH',
-                    os.path.join(current_app.root_path, 'database/migrations'))
+            migrations_path = self.migrations_path()
 
             with self.connect() as conn:
                 init(conn)
@@ -102,7 +108,8 @@ class MigratePg:
 
         @bp.cli.command('new')
         def new():
-            print('New file: ')
+            migrations_path = self.migrations_path()
+            print(f'New file: {migrations_path}')
             print('Done.')
 
         app.register_blueprint(bp)
