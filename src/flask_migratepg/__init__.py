@@ -100,4 +100,9 @@ class MigratePg:
 
             print('Done.')
 
+        @bp.cli.command('new')
+        def new():
+            print('New file: ')
+            print('Done.')
+
         app.register_blueprint(bp)
