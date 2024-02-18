@@ -1,4 +1,5 @@
 from flask import Blueprint, current_app
+from datetime import datetime
 import psycopg
 import importlib.util
 import os
@@ -109,7 +110,12 @@ class MigratePg:
         @bp.cli.command('new')
         def new():
             migrations_path = self.migrations_path()
-            print(f'New file: {migrations_path}')
+            extension = 'sql'
+            name = 'test_migration'
+            datestamp = datetime.now().date().strftime('%Y%m%d')
+            filename = f'{datestamp}_001_{name}.{extension}'
+            filepath = f'{migrations_path}/{filename}'
+            print(f'New file: {filepath}')
             print('Done.')
 
         app.register_blueprint(bp)
