@@ -1,9 +1,9 @@
-from flask import Blueprint, current_app
-from datetime import datetime
+import os
+import re
 import psycopg
 import importlib.util
-import os
-import json
+from flask import Blueprint, current_app
+from datetime import datetime
 
 
 def migrate_sql(conn, e):
@@ -107,15 +107,24 @@ class MigratePg:
 
             print('Done.')
 
+
         @bp.cli.command('new')
         def new():
             migrations_path = self.migrations_path()
             extension = 'sql'
             name = 'test_migration'
             datestamp = datetime.now().date().strftime('%Y%m%d')
-            filename = f'{datestamp}_001_{name}.{extension}'
+
+            i = 1
+            for f in os.listdir(migrations_path):
+                if m := re.match(r'^([0-9]{8})_([0-9]{3})_(\w+)\.(sql|py)', f):
+                    if datestamp == m.group(1):
+                        i = int(m.group(2)) + 1 # Next daily number.
+            number = str(i).rjust(3, '0')
+
+            filename = f'{datestamp}_{number}_{name}.{extension}'
             filepath = f'{migrations_path}/{filename}'
             print(f'New file: {filepath}')
-            print('Done.')
+            open(filepath, 'a').close()
 
         app.register_blueprint(bp)
