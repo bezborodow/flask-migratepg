@@ -69,19 +69,22 @@ class MigratePg:
             self.init(app)
 
 
+    # Establish connection to the database.
     def connect(self):
         return psycopg.connect(
                 current_app.config.get('PSYCOPG_CONNINFO'))
 
 
+    # Where the migrations files are stored.
     def migrations_path(self):
         return current_app.config.get(
                 'MIGRATIONS_PATH',
                 os.path.join(current_app.root_path, 'database/migrations'))
 
-
+    # Register command blueprints with Flask.
     def init(self, app):
         bp = Blueprint('migrate', __name__)
+
 
         @bp.cli.command('execute', help='Run migrations.')
         def execute():
@@ -138,10 +141,12 @@ class MigratePg:
             name = re.sub(r'\W', '_', name) # Sanitize
             extension = 'py' if py else 'sql'
 
+            # Create file.
             filename = f'{datestamp}_{number}_{name}.{extension}'
             filepath = f'{migrations_path}/{filename}'
-            print(f'New file: {filepath}')
             open(filepath, 'a').close()
+
+            print(f'New file: {filepath}')
 
 
         app.register_blueprint(bp)
