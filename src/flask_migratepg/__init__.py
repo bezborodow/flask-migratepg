@@ -1,5 +1,6 @@
 import os
 import re
+import click
 import psycopg
 import importlib.util
 from flask import Blueprint, current_app
@@ -109,10 +110,12 @@ class MigratePg:
 
 
         @bp.cli.command('new')
-        def new():
+        @click.argument('name')
+        def new(name):
+            name = re.sub(r'\W', '_', name) # Sanitize
+
             migrations_path = self.migrations_path()
             extension = 'sql'
-            name = 'test_migration'
             datestamp = datetime.now().date().strftime('%Y%m%d')
 
             i = 1
@@ -126,5 +129,6 @@ class MigratePg:
             filepath = f'{migrations_path}/{filename}'
             print(f'New file: {filepath}')
             open(filepath, 'a').close()
+
 
         app.register_blueprint(bp)
