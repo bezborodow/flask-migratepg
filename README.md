@@ -29,6 +29,8 @@ app.config.from_mapping(
 MigratePg(app)
 ````
 
+## Usage
+
 Create a new migration SQL file:
 
 ```
@@ -46,7 +48,7 @@ $ flask migrate execute
 
 This will run migrations in alphabetical order and track them in a migrations table.
 
-## Migration Files
+### Migration Files
 
 Migrations are placed under `database/migrations/` as either an **SQL** or **Python** file
 (that is, with an `.sql` or `.py` filename extension respectively.)
@@ -55,13 +57,13 @@ The recommended filename format is `YYMMDD_NNN_migration_name.sql`, for example,
 
 If there is a failure, the transaction will be rolled back.
 
-### SQL (`.sql`) Migrations
+#### SQL (`.sql`) Migrations
 
 An SQL migration file will be executed. Statements are separated as per standard SQL conventions with a semicolon.
 
 These are just plain-text standard SQL files. Comments (lines beginning with `-- `) will be ignored. 
 
-### Python (`.py`) Migrations
+#### Python (`.py`) Migrations
 
 A Python file will be executed.
 
