@@ -52,29 +52,11 @@ If there is a failure, the transaction will be rolled back.
 
 ### Migration Files
 
-Migrations are placed under `database/migrations/` as either an **SQL** or **Python** file
-(that is, with an `.sql` or `.py` filename extension respectively.)
+Migrations are placed under `database/migrations/` as an **SQL** file
+(that is, with an `.sql` filename extension.)
 
 The recommended filename format is `YYMMDD_NNN_migration_name.sql`, for example, `20240219_001_add_table_accounts.sql`.
 
-#### SQL (`.sql`) Migrations
-
-An SQL migration file will be executed. Statements are separated as per standard SQL conventions with a semicolon.
+Statements are separated as per standard SQL conventions with a semicolon.
 
 These are just plain-text standard SQL files. Comments (lines beginning with `-- `) will be ignored. 
-
-#### Python (`.py`) Migrations
-
-A Python file will be executed.
-
-An optional method `migrate(conn)` is available. If this method is
-present, it will be called with a database connection handle as the parameter; otherwise,
-the Python script will be executed normally.
-
-An example of the method:
-
-````python
-def migrate(conn):
-    cur = conn.cursor()
-    # ...
-````
