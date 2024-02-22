@@ -7,27 +7,13 @@ from flask import Blueprint, current_app
 from datetime import datetime
 
 
-def migrate_sql(conn, e):
+def migrate(conn, e):
     with open(e.path) as f:
         with psycopg.ClientCursor(conn) as cur:
             if not begin(cur, e.name):
                 return
             cur.execute(f.read())
             finalise(cur, e.name)
-
-
-def migrate_py(conn, e):
-    module_name = os.path.splitext(e.name)[0]
-    spec = importlib.util.spec_from_file_location(module_name, e.path)
-    module = importlib.util.module_from_spec(spec)
-
-    with psycopg.ClientCursor(conn) as cur:
-        if not begin(cur, e.name):
-            return
-        spec.loader.exec_module(module)
-        if hasattr(module, 'migrate'):
-            module.migrate(conn)
-        finalise(cur, e.name)
 
 
 def begin(cur, name):
@@ -103,46 +89,33 @@ class MigratePg:
 
                         # SQL migration.
                         if e.name.endswith('.sql'):
-                            migrate_sql(conn, e)
-
-                        # Python migration.
-                        if e.name.endswith('.py'):
-                            migrate_py(conn, e)
+                            migrate(conn, e)
 
             print('Done.')
 
 
         @bp.cli.command('new', help='Create a new migration file.')
         @click.argument('name')
-        @click.option('--utc', is_flag=True, default=False, show_default=True,
-                      help='Datestamp in UTC instead of local time.')
-        @click.option('--py', is_flag=True, default=False, show_default=True,
-                      help='Create a Python file instead of an SQL file.')
-        def new(name, utc, py):
+        def new(name):
             # Directory.
             migrations_path = self.migrations_path()
 
-            # Datestamp.
-            if utc:
-                now = datetime.utcnow()
-            else:
-                now = datetime.now()
+            now = datetime.utcnow()
             datestamp = now.date().strftime('%Y%m%d')
 
             # Order number.
             i = 1
             for f in os.listdir(migrations_path):
-                if m := re.match(r'^([0-9]{8})_([0-9]{3})_(\w+)\.(sql|py)', f):
+                if m := re.match(r'^([0-9]{8})_([0-9]{3})_(\w+)\.sql', f):
                     if datestamp == m.group(1):
                         i = int(m.group(2)) + 1 # Next daily number.
             number = str(i).rjust(3, '0')
 
             # Name
             name = re.sub(r'\W', '_', name) # Sanitize
-            extension = 'py' if py else 'sql'
 
             # Create file.
-            filename = f'{datestamp}_{number}_{name}.{extension}'
+            filename = f'{datestamp}_{number}_{name}.sql'
             filepath = f'{migrations_path}/{filename}'
             open(filepath, 'a').close()
 
