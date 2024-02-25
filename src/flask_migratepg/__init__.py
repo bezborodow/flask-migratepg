@@ -70,6 +70,7 @@ class MigratePg:
     # Register command blueprints with Flask.
     def init(self, app):
         bp = Blueprint('migrate', __name__)
+        bp.cli.short_help = 'PostgreSQL database migrations.'
 
 
         @bp.cli.command('execute', help='Run migrations.')
