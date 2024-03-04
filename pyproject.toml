@@ -1,6 +1,6 @@
 [project]
 name = "flask-migratepg"
-version = "1.0.1"
+version = "1.0.2"
 authors = [
   { name="Damien Bezborodov", email="dbezborodov@gmail.com" },
 ]
@@ -12,6 +12,11 @@ classifiers = [
     "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
     "Framework :: Flask",
+]
+dependencies = [
+    "flask >= 3.0",
+    "psycopg >= 3.1",
+    "click >= 8.0.0",
 ]
 
 [project.urls]
