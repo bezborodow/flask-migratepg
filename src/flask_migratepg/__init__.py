@@ -8,7 +8,7 @@ from datetime import datetime
 
 
 def migrate(conn, e):
-    with open(e.path) as f:
+    with open(e.path, encoding='utf-8') as f:
         with psycopg.ClientCursor(conn) as cur:
             if not begin(cur, e.name):
                 return
