@@ -1,5 +1,7 @@
 # PostgreSQL Database Migrations for Flask with Psycopg
 
+*Disclaimer: This project is not an official part of the [Flask](https://github.com/pallets/flask) software and is not affiliated with the [Pallets](https://palletsprojects.com/) organisation.*
+
 ## Synopsis
 
 `flask-migratepg` is a simple migrations tool for Flask and [Psycopg 3](https://www.psycopg.org/psycopg3/).
